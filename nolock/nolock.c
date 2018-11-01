@@ -18,11 +18,11 @@
 #include <linux/timer.h>
 #include <linux/delay.h>
 
-MODULE_LICENSE("GPL"); 
+
+
+/* Counter Struct */MODULE_LICENSE("GPL"); 
 MODULE_AUTHOR("John Rufino Macasaet");
 MODULE_DESCRIPTION("Prints nth triangular number to /proc/macasaet_procfs");
-
-/* Counter Struct */
 typedef struct __counter_t {
   volatile int value;
 } counter_t;
@@ -46,17 +46,11 @@ int get (counter_t *c) {
   return c->value;
 }
 
-void cleanup(void){
-  printk(KERN_INFO "Module cleanup");
-}
-
 /* Threads */
 
 int thread_fn1(void *myvar){
     int i;
-    msleep(1000);
-    msleep(1000);
-    msleep(1000);
+    msleep(9000);
     for(i=0; i<500000; i++){
         increment(&count);
     }
@@ -65,9 +59,7 @@ int thread_fn1(void *myvar){
 }
 int thread_fn2(void *myvar){
     int i;
-    msleep(1000);
-    msleep(1000);
-    msleep(1000);
+    msleep(9000);
     for(i=0; i<500000; i++){
         increment(&count);
     }
@@ -91,29 +83,33 @@ int init_module (void) {
     char fourth_thread[8] = "thread4";
     char fifth_thread[8] = "thread5";
     /* counter var */
-    printk(KERN_INFO "Module init\n");
+    printk(KERN_INFO "%s: Module init\n",__FUNCTION__);
     /* counter init*/
-    thread1 = kthread_create(thread_fn1,NULL,first_thread);
-    thread2 = kthread_create(thread_fn2,NULL,second_thread);
-    thread3 = kthread_create(thread_fn1,NULL,third_thread);
-    thread4 = kthread_create(thread_fn2,NULL,fourth_thread);
-    thread5 = kthread_create(thread_fn2,NULL,fifth_thread);
+    thread1 = kthread_create(thread_fn2,NULL,first_thread);
     if((thread1)){
         printk(KERN_INFO "In thread1.");
         wake_up_process(thread1);
     }
+    msleep(2000);
+    thread2 = kthread_create(thread_fn1,NULL,second_thread);
     if((thread2)){
         printk(KERN_INFO "In thread2.");
         wake_up_process(thread2);
     }
+    //msleep(2000);
+    thread3 = kthread_create(thread_fn2,NULL,third_thread);
     if((thread3)){
         printk(KERN_INFO "In thread3.");
         wake_up_process(thread3);
     }
+    //msleep(2000);
+    thread4 = kthread_create(thread_fn2,NULL,fourth_thread);
     if((thread4)){
         printk(KERN_INFO "In thread4.");
         wake_up_process(thread4);
     }
+    //msleep(1000);
+    thread5 = kthread_create(thread_fn1,NULL,fifth_thread);
     if((thread5)){
         printk(KERN_INFO "In thread5.");
         wake_up_process(thread5);
@@ -122,5 +118,5 @@ int init_module (void) {
 }
 
 void cleanup_module(void){
-    printk(KERN_INFO "LKM removed.");
+    printk(KERN_INFO "%s: LKM removed.\n",__FUNCTION__);
 }
