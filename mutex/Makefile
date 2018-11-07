@@ -1,4 +1,4 @@
-obj-m := lab8_threads_macasaet.o
+obj-m := lab8_mutex_macasaet.o
 KDIR := /lib/modules/4.15.0-36-generic/build
 PWD := $(shell pwd)
 
