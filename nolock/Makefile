@@ -1,5 +1,5 @@
-#obj-m := nolock.o
-obj-m := trylock.o
+obj-m := nolock.o
+#obj-m := trylock.o
 KDIR := /lib/modules/4.15.0-36-generic/build
 PWD := $(shell pwd)
 
